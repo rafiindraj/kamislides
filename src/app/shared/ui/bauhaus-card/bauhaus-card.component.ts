@@ -37,7 +37,7 @@ export type BauhausCardVariant =
       box-shadow: var(--shadow-subtle);
       transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease;
       overflow: hidden;
-      height: 100%;
+      height: 85%;
       display: flex;
       flex-direction: column;
     }
@@ -53,7 +53,7 @@ export type BauhausCardVariant =
     }
 
     .card-content {
-      padding: 1.5rem;
+      padding: 1.25rem;
       flex: 1;
       display: flex;
       flex-direction: column;

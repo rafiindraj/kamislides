@@ -61,6 +61,10 @@ import { BauhausIconComponent } from '../../../shared/ui/bauhaus-icon/bauhaus-ic
                 <span class="key-desc">Bisukan / Bunyikan Efek Suara</span>
               </div>
               <div class="shortcut-item">
+                <span class="key-combo"><kbd>A</kbd></span>
+                <span class="key-desc">Ganti Gaya Animasi (Android 17 / Expressive)</span>
+              </div>
+              <div class="shortcut-item">
                 <span class="key-combo"><kbd>?</kbd></span>
                 <span class="key-desc">Buka Panduan Pintasan Ini</span>
               </div>

@@ -24,6 +24,9 @@ import { BauhausGeometricComponent } from '../../../shared/ui/bauhaus-geometric/
 export class SlideCanvasComponent {
   readonly slide = input.required<ISlide>();
   readonly isPresentationMode = input<boolean>(false);
+  readonly direction = input<'forward' | 'backward' | 'jump'>('forward');
+  readonly isOutgoing = input<boolean>(false);
+  readonly motionStyle = input<string>('android-open');
 
   readonly actionTriggered = output<string>();
 

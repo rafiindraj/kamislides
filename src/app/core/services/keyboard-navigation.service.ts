@@ -35,6 +35,11 @@ export class KeyboardNavigationService {
       return;
     }
 
+    // Allow standard browser shortcuts (e.g. Ctrl+P for print, Ctrl+R, etc.) to pass through
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return;
+    }
+
     let handled = true;
 
     this.ngZone.run(() => {
@@ -95,6 +100,11 @@ export class KeyboardNavigationService {
         case 'p':
         case 'P':
           this.slideManager.toggleAutoPlay();
+          break;
+
+        case 'a':
+        case 'A':
+          this.slideManager.cycleMotionStyle();
           break;
 
         case '?':

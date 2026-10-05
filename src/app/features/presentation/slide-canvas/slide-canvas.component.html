@@ -1,7 +1,15 @@
-<div class="slide-stage animate-slide-up" [attr.data-slide-id]="slide().id"
-  [class.is-presentation-mode]="isPresentationMode()">
+<div class="slide-stage"
+  [attr.data-slide-id]="slide().id"
+  [class.is-presentation-mode]="isPresentationMode()"
+  [class.is-outgoing]="isOutgoing()"
+  [attr.data-direction]="direction()"
+  [attr.data-motion]="motionStyle()">
   <!-- Widescreen 16:9 Presentation Canvas -->
-  <div class="canvas-aspect-wrapper" [class.is-presentation-mode]="isPresentationMode()">
+  <div class="canvas-aspect-wrapper"
+    [class.is-presentation-mode]="isPresentationMode()"
+    [class.is-outgoing]="isOutgoing()"
+    [attr.data-direction]="direction()"
+    [attr.data-motion]="motionStyle()">
     <div class="canvas-inner">
 
       <!-- Slide Meta Top Header -->
@@ -32,7 +40,7 @@
         <div class="layout-intro-clean">
           <div class="intro-eyebrow">
             <span class="eyebrow-line"></span>
-            <span class="eyebrow-text">SHARING SESSION &bull; SOFTWARE ENGINEER</span>
+            <span class="eyebrow-text">SHARING SESSION &bull; DOA PAGI</span>
           </div>
 
           <h1 class="intro-main-title">
@@ -85,10 +93,10 @@
             @if (slide().interactiveType === 'duck') {
             <div class="duck-interactive-widget">
               <div class="duck-widget-header">
-                <span class="duck-tag">INTERAKTIF: KLIK SI BEBEK</span>
+                <span class="duck-tag">UJANG SI BEBEK</span>
                 <app-bauhaus-button variant="tertiary" size="sm" (clicked)="triggerDuckTalk()">
                   <app-bauhaus-icon name="repeat" [size]="14"></app-bauhaus-icon>
-                  Ajak Curhat Lagi
+                  Ajak Curhat ?
                 </app-bauhaus-button>
               </div>
               <div class="duck-bubble-chat">
@@ -181,7 +189,7 @@
 
             <!-- Interactive Mode Switcher -->
             <div class="mode-switcher-bar">
-              <span class="switcher-label">SIMULASI MODE:</span>
+              <span class="switcher-label">MODE:</span>
               <app-bauhaus-button [variant]="selectedFocusMode() === 'focus' ? 'primary' : 'outline'" size="sm"
                 (clicked)="setFocusMode('focus')">
                 <app-bauhaus-icon name="target" [size]="14"></app-bauhaus-icon>
@@ -359,7 +367,7 @@
               @if (!eyeTimerRunning()) {
               <app-bauhaus-button variant="tertiary" size="sm" (clicked)="startEyeExercise()">
                 <app-bauhaus-icon name="eye" [size]="16"></app-bauhaus-icon>
-                COBA LATIHAN 20-20-20 SEKARANG!
+                LATIHAN MENURUNKAN STRESS
               </app-bauhaus-button>
               } @else {
               <div class="eye-timer-active">
@@ -482,8 +490,14 @@
       }
 
       @if (slide().quote) {
-      <div class="alert-quote-footer">
-        <p>“{{ slide().quote?.text }}”</p>
+      <div class="bauhaus-quote-banner alert-quote-banner">
+        <div class="quote-mark">“</div>
+        <div class="quote-body">
+          <p class="quote-text">{{ slide().quote?.text }}</p>
+          @if (slide().quote?.author) {
+          <span class="quote-author">— {{ slide().quote?.author }}</span>
+          }
+        </div>
       </div>
       }
     </div>

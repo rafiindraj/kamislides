@@ -13,11 +13,56 @@
     }
 
     <!-- Center Stage: 16:9 Presentation Canvas -->
-    <div class="canvas-stage-wrapper">
-      <app-slide-canvas
-        [slide]="slideManager.currentSlide()"
-        [isPresentationMode]="slideManager.isFullscreen()"
-      ></app-slide-canvas>
+    <div class="canvas-stage-wrapper" [attr.data-direction]="slideManager.navigationDirection()" [attr.data-motion]="slideManager.motionStyle()">
+      <!-- Android 17 / Material Expressive Ambient Aura Burst -->
+      @if (slideManager.isTransitioning()) {
+        <div class="expressive-aura-burst" [attr.data-direction]="slideManager.navigationDirection()"></div>
+      }
+
+      <!-- Android 17 Dynamic Pill Island HUD -->
+      @if (slideManager.isTransitioning()) {
+        <div class="android-expressive-island" [class.is-backward]="slideManager.navigationDirection() === 'backward'">
+          <div class="island-icon-box">
+            <span class="android-pulse-dot"></span>
+          </div>
+          <div class="island-content">
+            <span class="island-slide-num">Slide {{ slideManager.currentIndex() + 1 }} / {{ slideManager.totalSlides() }}</span>
+            <span class="island-sep">&bull;</span>
+            <span class="island-dir">{{ slideManager.navigationDirection() === 'forward' ? 'Next ➔' : (slideManager.navigationDirection() === 'backward' ? '◀ Prev' : 'Jump ✦') }}</span>
+          </div>
+          <div class="island-badge">{{ slideManager.motionStyleLabel() }}</div>
+        </div>
+      }
+
+      <div class="stage-transition-viewport">
+        <!-- Outgoing Slide Layer during transition for true Android App Opening cross-container depth -->
+        @if (slideManager.isTransitioning() && slideManager.previousSlide(); as prev) {
+          <div class="stage-slide-layer outgoing-slide" [attr.data-direction]="slideManager.navigationDirection()" aria-hidden="true">
+            <app-slide-canvas
+              [slide]="prev"
+              [isPresentationMode]="slideManager.isFullscreen()"
+              [direction]="slideManager.navigationDirection()"
+              [isOutgoing]="true"
+              [motionStyle]="slideManager.motionStyle()"
+            ></app-slide-canvas>
+          </div>
+        }
+
+        <!-- Incoming Active Slide Layer -->
+        @for (current of [slideManager.currentSlide()]; track current.id + '_' + slideManager.transitionCounter()) {
+          <div class="stage-slide-layer incoming-slide" 
+               [attr.data-direction]="slideManager.navigationDirection()"
+               [attr.data-motion]="slideManager.motionStyle()">
+            <app-slide-canvas
+              [slide]="current"
+              [isPresentationMode]="slideManager.isFullscreen()"
+              [direction]="slideManager.navigationDirection()"
+              [isOutgoing]="false"
+              [motionStyle]="slideManager.motionStyle()"
+            ></app-slide-canvas>
+          </div>
+        }
+      </div>
     </div>
 
     <!-- Presenter Notes & Teleprompter Drawer (Hidden in Fullscreen mode) -->
@@ -48,8 +93,11 @@
       [isDarkTheme]="themeService.isDark()"
       [isMuted]="audioService.isMuted()"
       [isFullscreen]="slideManager.isFullscreen()"
+      [isGeneratingPdf]="isGeneratingPdf()"
       [formattedElapsed]="timerService.formattedElapsed()"
       [isTimerRunning]="timerService.isRunning()"
+      [motionStyle]="slideManager.motionStyle()"
+      [motionStyleLabel]="slideManager.motionStyleLabel()"
       (prevClicked)="slideManager.prevSlide()"
       (nextClicked)="slideManager.nextSlide()"
       (slideSelected)="slideManager.goToSlide($event)"
@@ -59,7 +107,9 @@
       (toggleTheme)="themeService.toggleTheme()"
       (toggleSound)="audioService.toggleSound()"
       (toggleFullscreen)="slideManager.toggleFullscreen()"
+      (printPdf)="downloadPDF()"
       (toggleShortcuts)="slideManager.toggleShortcuts()"
+      (cycleMotionStyle)="slideManager.cycleMotionStyle()"
       (startTimer)="timerService.start()"
       (pauseTimer)="timerService.pause()"
       (resetTimer)="timerService.reset()"
@@ -113,6 +163,16 @@
 
         <button
           type="button"
+          class="fs-dock-nav-btn fs-dock-motion-btn"
+          (click)="slideManager.cycleMotionStyle()"
+          [title]="'Gaya Animasi: ' + slideManager.motionStyleLabel() + ' (A / Klik)'"
+        >
+          <span class="fs-btn-icon">⚡</span>
+          <span class="fs-btn-label">{{ slideManager.motionStyleLabel() }}</span>
+        </button>
+
+        <button
+          type="button"
           class="fs-dock-exit-btn"
           (click)="slideManager.toggleFullscreen()"
           title="Keluar Fullscreen (F5 / Esc)"
@@ -151,3 +211,16 @@
     (close)="slideManager.toggleShortcuts()"
   ></app-shortcuts-modal>
 </div>
+
+<!-- Dedicated 16:9 PDF Export Deck (Only printed/extracted, hidden on interactive screen) -->
+<div #pdfContent class="pdf-print-deck" aria-hidden="true">
+  @for (slideItem of slideManager.slides(); track slideItem.id) {
+    <section class="pdf-print-page">
+      <app-slide-canvas
+        [slide]="slideItem"
+        [isPresentationMode]="false"
+      ></app-slide-canvas>
+    </section>
+  }
+</div>
+

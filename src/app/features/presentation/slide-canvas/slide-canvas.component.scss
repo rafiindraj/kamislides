@@ -963,7 +963,7 @@
 .items-vertical-list {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: unset;
   justify-content: center;
 }
 
@@ -2004,3 +2004,428 @@
   font-size: 0.8rem;
   opacity: 0.9;
 }
+
+/* ==========================================================================
+   ANDROID 17 APP OPENING & MATERIAL EXPRESSIVE TRANSITIONS
+   ========================================================================== */
+
+/*
+  Material 3 Expressive & Android 17 Motion Physics:
+  - Container Transform with Squircle Morph (Corner Radius: 44px -> Frame Radius)
+  - Emphasized Elastic Overshoot Spring (cubic-bezier(0.05, 0.7, 0.1, 1.0))
+  - Dynamic Elevation Luminous Burst
+  - Staggered Internal Element Cascades
+*/
+
+.canvas-aspect-wrapper {
+  will-change: transform, opacity, border-radius;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+
+  // 1. Android 17 App Open (Default Expressive Mode)
+  &[data-motion="android-open"] {
+    // Forward / Next Slide Navigation
+    &[data-direction="forward"]:not(.is-outgoing) {
+      animation: android17OpenForward 580ms cubic-bezier(0.05, 0.7, 0.1, 1.0) both;
+      transform-origin: 70% 50%;
+    }
+
+    // Backward / Previous Slide Navigation (Predictive Back Gesture)
+    &[data-direction="backward"]:not(.is-outgoing) {
+      animation: android17OpenBackward 580ms cubic-bezier(0.05, 0.7, 0.1, 1.0) both;
+      transform-origin: 30% 50%;
+    }
+
+    // Jump / Direct Slide Selection
+    &[data-direction="jump"]:not(.is-outgoing) {
+      animation: android17OpenCenter 600ms cubic-bezier(0.05, 0.7, 0.1, 1.0) both;
+      transform-origin: 50% 50%;
+    }
+
+    // Outgoing Slide Exits
+    &[data-direction="forward"].is-outgoing {
+      animation: android17ExitForward 480ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+      pointer-events: none;
+    }
+
+    &[data-direction="backward"].is-outgoing {
+      animation: android17ExitBackward 480ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+      pointer-events: none;
+    }
+
+    &[data-direction="jump"].is-outgoing {
+      animation: android17ExitCenter 480ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+      pointer-events: none;
+    }
+  }
+
+  // 2. Spatial 3D Mode
+  &[data-motion="predictive-spatial"] {
+    &[data-direction="forward"]:not(.is-outgoing) {
+      animation: spatialForwardIn 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    &[data-direction="backward"]:not(.is-outgoing) {
+      animation: spatialBackwardIn 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    &[data-direction="forward"].is-outgoing {
+      animation: spatialForwardOut 460ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+      pointer-events: none;
+    }
+    &[data-direction="backward"].is-outgoing {
+      animation: spatialBackwardOut 460ms cubic-bezier(0.3, 0, 0.8, 0.15) forwards;
+      pointer-events: none;
+    }
+  }
+
+  // 3. Elastic Wave Mode
+  &[data-motion="elastic-wave"] {
+    &[data-direction="forward"]:not(.is-outgoing) {
+      animation: elasticWaveForward 600ms cubic-bezier(0.34, 1.25, 0.64, 1) both;
+    }
+    &[data-direction="backward"]:not(.is-outgoing) {
+      animation: elasticWaveBackward 600ms cubic-bezier(0.34, 1.25, 0.64, 1) both;
+    }
+    &.is-outgoing {
+      animation: subtleFadeOut 400ms ease-in forwards;
+      pointer-events: none;
+    }
+  }
+
+  // 4. Subtle Mode (Clean & Accessible)
+  &[data-motion="subtle"] {
+    &:not(.is-outgoing) {
+      animation: subtleFadeIn 320ms cubic-bezier(0, 0, 0.2, 1) both;
+    }
+    &.is-outgoing {
+      animation: subtleFadeOut 280ms cubic-bezier(0.4, 0, 1, 1) forwards;
+      pointer-events: none;
+    }
+  }
+}
+
+/* Material Expressive Staggered Internal Content Entrance */
+.canvas-aspect-wrapper:not(.is-outgoing):not([data-motion="subtle"]) {
+  .slide-header {
+    animation: m3ExpressiveDropIn 480ms cubic-bezier(0.05, 0.7, 0.1, 1.0) 50ms backwards;
+  }
+
+  .intro-eyebrow,
+  .slide-heading,
+  .challenge-scenario-banner {
+    animation: m3ExpressiveSlideUp 520ms cubic-bezier(0.05, 0.7, 0.1, 1.0) 90ms backwards;
+  }
+
+  .intro-subtitle,
+  .slide-subheading {
+    animation: m3ExpressiveSlideUp 520ms cubic-bezier(0.05, 0.7, 0.1, 1.0) 130ms backwards;
+  }
+
+  .presenter-card-bauhaus,
+  .interactive-box,
+  .checklist-wrapper,
+  .problem-grid,
+  .code-window,
+  .comparison-columns,
+  .framework-grid,
+  .action-box,
+  .summary-grid,
+  .closing-layout {
+    animation: m3ExpressiveCardPop 550ms cubic-bezier(0.175, 0.885, 0.32, 1.1) 170ms backwards;
+  }
+
+  .slide-footer {
+    animation: fadeIn 380ms ease-out 220ms backwards;
+  }
+}
+
+/* ==========================================================================
+   KEYFRAME DEFINITIONS (Android 17 Spring & Material Expressive)
+   ========================================================================== */
+
+/* Android 17 Forward App-Open Container Transform */
+@keyframes android17OpenForward {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateX(48px) rotateY(-2.5deg);
+    border-radius: 44px;
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.35), 0 32px 72px -8px rgba(0, 0, 0, 0.4);
+    filter: blur(5px);
+  }
+  35% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  75% {
+    transform: scale(1.018) translateX(-2px) rotateY(0.4deg);
+    border-radius: 16px;
+    box-shadow: 0 0 36px rgba(230, 57, 70, 0.22), 0 24px 60px -6px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0) rotateY(0deg);
+    border-radius: inherit;
+    box-shadow: var(--shadow-subtle);
+    filter: blur(0px);
+  }
+}
+
+/* Android 17 Backward (Predictive Back Gesture) Container Transform */
+@keyframes android17OpenBackward {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateX(-48px) rotateY(2.5deg);
+    border-radius: 44px;
+    box-shadow: 0 0 0 1px rgba(29, 53, 87, 0.35), 0 32px 72px -8px rgba(0, 0, 0, 0.4);
+    filter: blur(5px);
+  }
+  35% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  75% {
+    transform: scale(1.018) translateX(2px) rotateY(-0.4deg);
+    border-radius: 16px;
+    box-shadow: 0 0 36px rgba(29, 53, 87, 0.22), 0 24px 60px -6px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0) rotateY(0deg);
+    border-radius: inherit;
+    box-shadow: var(--shadow-subtle);
+    filter: blur(0px);
+  }
+}
+
+/* Android 17 Launcher App Open (Centered) */
+@keyframes android17OpenCenter {
+  0% {
+    opacity: 0;
+    transform: scale(0.84);
+    border-radius: 52px;
+    box-shadow: 0 0 44px rgba(244, 162, 97, 0.35), 0 36px 84px rgba(0, 0, 0, 0.4);
+    filter: blur(6px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  75% {
+    transform: scale(1.022);
+    border-radius: 18px;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    border-radius: inherit;
+    box-shadow: var(--shadow-subtle);
+    filter: blur(0px);
+  }
+}
+
+/* Outgoing Slide Exits */
+@keyframes android17ExitForward {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateX(-48px);
+    border-radius: 36px;
+    filter: blur(6px);
+  }
+}
+
+@keyframes android17ExitBackward {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateX(48px);
+    border-radius: 36px;
+    filter: blur(6px);
+  }
+}
+
+@keyframes android17ExitCenter {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.90);
+    border-radius: 40px;
+    filter: blur(8px);
+  }
+}
+
+/* Spatial 3D Keyframes */
+@keyframes spatialForwardIn {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(70px, 0, -80px) rotateY(-5deg);
+  }
+  75% {
+    transform: perspective(1200px) translate3d(-2px, 0, 6px) rotateY(0.3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) translate3d(0, 0, 0) rotateY(0deg);
+  }
+}
+
+@keyframes spatialBackwardIn {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(-70px, 0, -80px) rotateY(5deg);
+  }
+  75% {
+    transform: perspective(1200px) translate3d(2px, 0, 6px) rotateY(-0.3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) translate3d(0, 0, 0) rotateY(0deg);
+  }
+}
+
+@keyframes spatialForwardOut {
+  0% {
+    opacity: 1;
+    transform: perspective(1200px) translate3d(0, 0, 0) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(-60px, 0, -100px) rotateY(6deg);
+  }
+}
+
+@keyframes spatialBackwardOut {
+  0% {
+    opacity: 1;
+    transform: perspective(1200px) translate3d(0, 0, 0) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(60px, 0, -100px) rotateY(-6deg);
+  }
+}
+
+/* Elastic Wave Keyframes */
+@keyframes elasticWaveForward {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) translateY(32px);
+    border-radius: 52px;
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.035) translateY(-5px);
+    border-radius: 12px;
+  }
+  80% {
+    transform: scale(0.985) translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    border-radius: inherit;
+  }
+}
+
+@keyframes elasticWaveBackward {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) translateY(-32px);
+    border-radius: 52px;
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.035) translateY(5px);
+    border-radius: 12px;
+  }
+  80% {
+    transform: scale(0.985) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    border-radius: inherit;
+  }
+}
+
+/* Subtle Keyframes */
+@keyframes subtleFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes subtleFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+/* Internal Material Expressive Cascades */
+@keyframes m3ExpressiveDropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes m3ExpressiveSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes m3ExpressiveCardPop {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.94);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Prefers Reduced Motion: Accessible fallback */
+@media (prefers-reduced-motion: reduce) {
+  .canvas-aspect-wrapper,
+  .canvas-aspect-wrapper * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

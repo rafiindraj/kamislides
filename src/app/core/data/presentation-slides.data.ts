@@ -36,7 +36,7 @@ export const PRESENTATION_SLIDES: ISlide[] = [
     items: [
       {
         title: 'Bug Gaib & Deadline Mepet',
-        description: 'Error-nya gak jelas di mana, log-nya sepi, tapi besok pagi udah kudu naik ke production. Klasik banget!',
+        description: 'Error-nya gak jelas di mana, log-nya sepi, tapi besok pagi udah harus naik ke production.',
         badge: 'Pemicu 01',
         icon: 'bug'
       },
@@ -144,7 +144,7 @@ export const PRESENTATION_SLIDES: ISlide[] = [
           col2: 'Keasyikan santai sampai lupa balik ke editor buat nyelesein kerjaan.'
         }
       ],
-      conclusion: 'Kunci Sukses: Gonta-ganti dengan ritme santai. Kalau udah stuck lebih dari 30 menit, cabut dulu dari layar dan biarin mode difus yang kerja!'
+      // conclusion: 'Kunci Sukses: Gonta-ganti dengan ritme santai. Kalau udah stuck lebih dari 30 menit, cabut dulu dari layar dan biarin mode difus yang kerja!'
     },
     notes: [
       'Gunakan analogi Barbara Oakley: otak fokus kayak senter sinar sempit, otak difus kayak lampu ruangan yang nerangin semuanya.',
@@ -434,7 +434,7 @@ export const PRESENTATION_SLIDES: ISlide[] = [
       },
       {
         title: 'Pas Nemu Kebuntuan',
-        description: 'Stop maksain ngetik -> Ajak ngobrol bebek karet di meja -> Buka AI agent buat diskusi sokratik.',
+        description: 'Stop maksain ngetik -> Ajak ngobrol bebek karet di meja -> Buka AI agent buat diskusi.',
         badge: 'Protokol Buntu',
         icon: 'help-circle'
       },
@@ -464,10 +464,10 @@ export const PRESENTATION_SLIDES: ISlide[] = [
     category: 'wellness',
     categoryLabel: 'KESEHATAN MENTAL',
     layout: 'critical-alert',
-    quote: {
-      text: 'Minta bantuan psikolog itu bukti kamu sayang dan peduli sama diri sendiri, bukan tanda kelemahan!',
-      author: 'Prinsip Kesejahteraan Software Engineer'
-    },
+    // quote: {
+    //   text: 'Minta bantuan psikolog itu bukti kamu sayang dan peduli sama diri sendiri, bukan tanda kelemahan!',
+    //   author: 'Prinsip Kesejahteraan Software Engineer'
+    // },
     items: [
       {
         title: 'Cemas & Murung Berminggu-minggu',
@@ -566,7 +566,7 @@ export const PRESENTATION_SLIDES: ISlide[] = [
         badge: 'Dukungan'
       }
     ],
-    keyTakeaway: 'Tantangan Minggu Ini: Pilih 1 trik simpel (misal taro bebek/miniatur di meja atau coba diskusi sokratik ke AI), lakuin selama seminggu, terus rasain bedanya!',
+    keyTakeaway: 'Tantangan Minggu Ini: Pilih 1 trik simpel (misal taro bebek/miniatur di meja atau coba diskusi ke AI), lakuin selama seminggu, terus rasain bedanya!',
     presenterInfo: {
       name: 'Rafi Indrajati',
       role: 'Front End Developer',

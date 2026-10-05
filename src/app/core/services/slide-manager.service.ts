@@ -4,19 +4,30 @@ import { ISlide } from '../models/slide.interface';
 import { PRESENTATION_SLIDES } from '../data/presentation-slides.data';
 import { AudioFeedbackService } from './audio-feedback.service';
 
+export type NavigationDirection = 'forward' | 'backward' | 'jump';
+export type MotionStyle = 'android-open' | 'predictive-spatial' | 'elastic-wave' | 'subtle';
+
 export interface ISlideManagerService {
   slides(): readonly ISlide[];
   currentIndex(): number;
   currentSlide(): ISlide;
+  previousSlide(): ISlide | null;
   totalSlides(): number;
   canNext(): boolean;
   canPrev(): boolean;
   progressPercent(): number;
+  navigationDirection(): NavigationDirection;
+  transitionCounter(): number;
+  isTransitioning(): boolean;
+  motionStyle(): MotionStyle;
+  motionStyleLabel(): string;
   nextSlide(): void;
   prevSlide(): void;
   goToSlide(index: number): void;
   firstSlide(): void;
   lastSlide(): void;
+  cycleMotionStyle(): void;
+  setMotionStyle(style: MotionStyle): void;
 }
 
 @Injectable({
@@ -28,6 +39,27 @@ export class SlideManagerService implements ISlideManagerService {
 
   readonly slides = signal<readonly ISlide[]>(PRESENTATION_SLIDES);
   readonly currentIndex = signal<number>(0);
+
+  // Transition & Motion states for Android 17 / Material Expressive
+  readonly navigationDirection = signal<NavigationDirection>('forward');
+  readonly transitionCounter = signal<number>(0);
+  readonly isTransitioning = signal<boolean>(false);
+  readonly previousSlide = signal<ISlide | null>(null);
+  readonly motionStyle = signal<MotionStyle>('android-open');
+  private transitionTimer: ReturnType<typeof setTimeout> | null = null;
+
+  readonly motionStyleLabel = computed(() => {
+    switch (this.motionStyle()) {
+      case 'android-open':
+        return 'Android 17';
+      case 'predictive-spatial':
+        return 'Spatial 3D';
+      case 'elastic-wave':
+        return 'Elastic Wave';
+      case 'subtle':
+        return 'Subtle Fade';
+    }
+  });
 
   // UI state toggles
   readonly isSorterOpen = signal<boolean>(false);
@@ -66,6 +98,10 @@ export class SlideManagerService implements ISlideManagerService {
         this.currentIndex.set(initialIdx);
       }
 
+      // Initial load animation
+      this.isTransitioning.set(true);
+      this.scheduleTransitionEnd();
+
       // Sync hash with current slide
       effect(() => {
         const idx = this.currentIndex();
@@ -80,8 +116,7 @@ export class SlideManagerService implements ISlideManagerService {
 
   nextSlide(): void {
     if (this.canNext()) {
-      this.currentIndex.update(i => i + 1);
-      this.audioService.playSlideChange();
+      this.triggerSlideTransition(this.currentIndex() + 1, 'forward');
     } else if (this.isAutoPlaying()) {
       this.stopAutoPlay();
     }
@@ -89,8 +124,7 @@ export class SlideManagerService implements ISlideManagerService {
 
   prevSlide(): void {
     if (this.canPrev()) {
-      this.currentIndex.update(i => i - 1);
-      this.audioService.playSlideChange();
+      this.triggerSlideTransition(this.currentIndex() - 1, 'backward');
     }
   }
 
@@ -98,9 +132,47 @@ export class SlideManagerService implements ISlideManagerService {
     const maxIdx = this.totalSlides() - 1;
     const clamped = Math.max(0, Math.min(index, maxIdx));
     if (clamped !== this.currentIndex()) {
-      this.currentIndex.set(clamped);
-      this.audioService.playSlideChange();
+      const dir: NavigationDirection =
+        Math.abs(clamped - this.currentIndex()) > 1
+          ? 'jump'
+          : clamped > this.currentIndex()
+          ? 'forward'
+          : 'backward';
+      this.triggerSlideTransition(clamped, dir);
     }
+  }
+
+  private triggerSlideTransition(targetIndex: number, direction: NavigationDirection): void {
+    this.previousSlide.set(this.currentSlide());
+    this.navigationDirection.set(direction);
+    this.transitionCounter.update(c => c + 1);
+    this.isTransitioning.set(true);
+    this.currentIndex.set(targetIndex);
+    this.audioService.playSlideChange();
+    this.scheduleTransitionEnd();
+  }
+
+  private scheduleTransitionEnd(): void {
+    if (this.transitionTimer) {
+      clearTimeout(this.transitionTimer);
+    }
+    // Android 17 / Material Expressive transition duration
+    this.transitionTimer = setTimeout(() => {
+      this.isTransitioning.set(false);
+      this.previousSlide.set(null);
+    }, 620);
+  }
+
+  cycleMotionStyle(): void {
+    const styles: MotionStyle[] = ['android-open', 'predictive-spatial', 'elastic-wave', 'subtle'];
+    const current = this.motionStyle();
+    const nextIdx = (styles.indexOf(current) + 1) % styles.length;
+    this.motionStyle.set(styles[nextIdx]);
+    this.audioService.playTactileClick();
+  }
+
+  setMotionStyle(style: MotionStyle): void {
+    this.motionStyle.set(style);
   }
 
   firstSlide(): void {

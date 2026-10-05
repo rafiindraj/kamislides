@@ -1,226 +1,27 @@
-/* ==========================================================================
-   BAUHAUS DESIGN SYSTEM — STYLES & TOKENS
-   Inspired by Weimar Bauhaus 1919-1933: Form Follows Function
-   Primary Colors: Red (#E63946), Navy Blue (#1D3557), Vivid Yellow (#F4D35E)
-   Geometry: Square, Circle, Triangle. Base Corner Radius: 0px.
-   ========================================================================== */
-
-:root,
-html[data-theme='bauhaus-light'] {
-  --color-primary: #E63946;        /* Bauhaus Crimson Red */
-  --color-secondary: #1D3557;      /* Bauhaus Deep Navy Blue */
-  --color-tertiary: #F4D35E;       /* Bauhaus Primary Yellow */
-  --color-neutral: #1A1A1A;        /* Off-Black Charcoal (no pure 000000) */
-  --color-neutral-muted: #595959;
-  --color-surface: #FFFFFF;        /* Crisp white canvas */
-  --color-surface-subtle: #F7F5F0; /* Bauhaus warm paper / vellum */
-  --color-surface-card: #FFFFFF;
-  --color-accent: #E8E8E8;         /* Border / muted line */
-  --color-border: #1A1A1A;         /* High contrast geometric border */
-  --color-border-subtle: #DCDCDC;
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #4A4A4A;
-  --color-text-inverse: #FFFFFF;
-
-  --code-bg: #1A1D20;
-  --code-text: #F8F9FA;
-  --code-border: #2D3748;
-
-  --shadow-subtle: 4px 4px 0px rgba(26, 26, 26, 0.95);
-  --shadow-hover: 6px 6px 0px rgba(26, 26, 26, 0.95);
-  --shadow-active: 1px 1px 0px rgba(26, 26, 26, 0.95);
-
-  --font-display: 'Josefin Sans', sans-serif;
-  --font-body: 'Josefin Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  --radius-base: 0px;
-}
-
-html[data-theme='bauhaus-dark'] {
-  --color-primary: #FF4D5E;        /* High-contrast Bauhaus Red for dark */
-  --color-secondary: #3D6A9E;      /* Brightened Bauhaus Blue */
-  --color-tertiary: orange;       /* Bright Bauhaus Yellow */
-  --color-neutral: #F5F5F5;        /* Inverse text */
-  --color-neutral-muted: #A3A3A3;
-  --color-surface: #14171A;        /* Bauhaus Dark Charcoal */
-  --color-surface-subtle: #1E2227; /* Dark panel */
-  --color-surface-card: #181C20;
-  --color-accent: #2B2F36;
-  --color-border: #3A424D;
-  --color-border-subtle: #2C323B;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #B0B7C3;
-  --color-text-inverse: #14171A;
-
-  --code-bg: #0E1114;
-  --code-text: #E2E8F0;
-  --code-border: #2B333E;
-
-  --shadow-subtle: 4px 4px 0px #0E1114;
-  --shadow-hover: 6px 6px 0px #0E1114;
-  --shadow-active: 1px 1px 0px #0E1114;
-}
-
-/* Base Reset & Box Sizing */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body {
-  height: 100%;
-  min-height: 100dvh;
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden; /* App-like full presentation canvas */
-}
-
-/* Fullscreen mode base scale boost */
-:fullscreen,
-:root:has(.is-fullscreen) {
-  font-size: 18px;
-
-  @media (min-width: 1600px) {
-    font-size: 20px;
-  }
-}
-
-/* Typography Hierarchy */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: var(--color-text-primary);
-}
-
-h1 {
-  font-size: clamp(2rem, 3.5vw, 3.25rem);
-}
-
-h2 {
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
-}
-
-h3 {
-  font-size: 1.35rem;
-}
-
-p {
-  max-width: 72ch;
-  color: var(--color-text-secondary);
-}
-
-code, pre, .font-mono {
-  font-family: var(--font-mono);
-}
-
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-surface-subtle);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-secondary);
-  border-radius: 0px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
-/* Keyframe Animations */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes geometricPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-
-.animate-slide-up {
-  animation: slideInUp 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade {
-  animation: fadeIn 220ms ease-out forwards;
-}
-
-/* Stagger helper classes */
-.delay-1 { animation-delay: 60ms; }
-.delay-2 { animation-delay: 120ms; }
-.delay-3 { animation-delay: 180ms; }
-.delay-4 { animation-delay: 240ms; }
-.delay-5 { animation-delay: 300ms; }
-
-/* Selection Styling */
-::selection {
-  background-color: var(--color-tertiary);
-  color: var(--color-neutral);
-}
-
-/* ==========================================================================
-   PRINT / PDF EXPORT (16:9 Widescreen Presentation)
-   Removes any print header & footer, hides interactive application UI,
-   and presents ONLY the slide contents in clean 16:9 aspect ratio.
-   ========================================================================== */
-.pdf-print-deck {
-  display: none;
-}
-
-@media print {
+/**
+ * Print & PDF Optimizer CSS.
+ * Applied during PDF extraction and printing to guarantee clean 16:9 slides,
+ * zero margins (removing browser print header/footer), and accurate colors.
+ */
+export const PRINT_OPTIMIZER_CSS = `
   @page {
-    size: 16in 9in; /* Exact 16:9 presentation slide aspect ratio */
-    margin: 0;      /* Removes browser print header (date/title) & footer (url/page numbers) */
+    size: 16in 9in;
+    margin: 0;
   }
 
-  *,
-  *::before,
-  *::after {
+  * {
     box-shadow: none !important;
     text-shadow: none !important;
     filter: none !important;
     backdrop-filter: none !important;
-    animation: none !important;
-    transition: none !important;
+    color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  html,
-  body {
+  html, body {
     width: 100% !important;
-    height: auto !important;
-    min-height: 100% !important;
+    height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #FFFFFF !important;
@@ -228,12 +29,12 @@ code, pre, .font-mono {
     overflow: visible !important;
   }
 
-  /* Completely remove interactive workspace, toolbar, sidebars & popups from print */
+  /* Remove any application chrome, navigation, headers, footers & buttons */
   .presentation-app-container,
   .workspace-area,
   app-sidebar-thumbnails,
-  app-presenter-notes,
   app-controls-bar,
+  app-presenter-notes,
   .fullscreen-presentation-nav,
   app-slide-sorter-modal,
   app-shortcuts-modal,
@@ -242,7 +43,7 @@ code, pre, .font-mono {
     display: none !important;
   }
 
-  /* Render exclusively the 16:9 presentation slides */
+  /* Show ONLY the slide deck in 16:9 */
   .pdf-print-deck {
     display: block !important;
     width: 100% !important;
@@ -270,27 +71,18 @@ code, pre, .font-mono {
   }
 
   .pdf-print-page app-slide-canvas,
-  .pdf-print-page .slide-stage {
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
+  .pdf-print-page .slide-stage,
   .pdf-print-page .canvas-aspect-wrapper {
     width: 16in !important;
     height: 9in !important;
     max-width: none !important;
     max-height: none !important;
     aspect-ratio: 16 / 9 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
   }
 
   .pdf-print-page .canvas-inner {
@@ -346,7 +138,7 @@ code, pre, .font-mono {
     color: var(--color-text-secondary) !important;
   }
 
-  /* --- Slide 01: Split Hero Optimizations --- */
+  /* Slide 01: Split Hero Optimizations */
   .pdf-print-page .layout-split-hero {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -408,7 +200,7 @@ code, pre, .font-mono {
     line-height: 1.25 !important;
   }
 
-  /* --- Slide 02: Checklist Diagnostic & Quote Banner --- */
+  /* Slide 02: Checklist Diagnostic & Quote Banner */
   .pdf-print-page .layout-checklist {
     display: flex !important;
     flex-direction: column !important;
@@ -494,7 +286,7 @@ code, pre, .font-mono {
     color: var(--color-neutral-muted) !important;
   }
 
-  /* --- Slide 11: Critical Alert & Quote Box --- */
+  /* Slide 11: Critical Alert & Quote Box */
   .pdf-print-page .layout-critical-alert {
     display: flex !important;
     flex-direction: column !important;
@@ -582,6 +374,5 @@ code, pre, .font-mono {
     box-shadow: 3px 3px 0px var(--color-border) !important;
     margin-top: 0.25rem !important;
   }
-}
-
+`;
 

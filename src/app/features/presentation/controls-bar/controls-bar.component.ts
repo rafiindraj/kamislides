@@ -131,6 +131,17 @@ import { BauhausProgressBarComponent } from '../../../shared/ui/bauhaus-progress
             <app-bauhaus-icon [name]="isDarkTheme() ? 'sun' : 'moon'" [size]="16"></app-bauhaus-icon>
           </button>
 
+          <!-- Material Expressive Motion Style Switcher -->
+          <button
+            class="tool-icon-btn motion-style-btn"
+            (click)="cycleMotionStyle.emit()"
+            [title]="'Animasi Slide: ' + motionStyleLabel() + ' (Klik / Tekan A)'"
+            aria-label="Ganti Gaya Animasi Slide"
+          >
+            <app-bauhaus-icon name="sparkles" [size]="15"></app-bauhaus-icon>
+            <span class="btn-tooltip-label">{{ motionStyleLabel() }}</span>
+          </button>
+
           <!-- Fullscreen Toggle -->
           <button
             class="tool-icon-btn highlight"
@@ -140,6 +151,21 @@ import { BauhausProgressBarComponent } from '../../../shared/ui/bauhaus-progress
             <app-bauhaus-icon [name]="isFullscreen() ? 'minimize' : 'maximize'" [size]="16"></app-bauhaus-icon>
             <span class="btn-tooltip-label">F5</span>
           </button>
+
+          <!-- Print to PDF (beside F5, hidden when fullscreen) -->
+          @if (!isFullscreen()) {
+            <button
+              class="tool-icon-btn highlight-pdf"
+              (click)="printPdf.emit()"
+              [disabled]="isGeneratingPdf()"
+              [attr.aria-busy]="isGeneratingPdf()"
+              title="Cetak Presentasi ke PDF (16:9)"
+              aria-label="Cetak Presentasi ke PDF"
+            >
+              <app-bauhaus-icon name="printer" [size]="16"></app-bauhaus-icon>
+              <span class="btn-tooltip-label">{{ isGeneratingPdf() ? '...' : 'PDF' }}</span>
+            </button>
+          }
 
           <!-- Shortcuts Dialog -->
           <button
@@ -305,9 +331,33 @@ import { BauhausProgressBarComponent } from '../../../shared/ui/bauhaus-progress
       color: #1A1A1A;
     }
 
+    .tool-icon-btn.highlight-pdf {
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      border-color: var(--color-border);
+    }
+
+    .tool-icon-btn.highlight-pdf:hover:not(:disabled) {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      box-shadow: 3px 3px 0px var(--color-border);
+    }
+
     .btn-tooltip-label {
       font-size: 0.68rem;
       letter-spacing: 0.05em;
+    }
+
+    .tool-icon-btn.motion-style-btn {
+      background-color: var(--color-surface);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      font-weight: 800;
+
+      &:hover {
+        background-color: var(--color-primary);
+        color: #FFFFFF;
+      }
     }
   `]
 })
@@ -325,9 +375,13 @@ export class ControlsBarComponent {
   readonly isDarkTheme = input<boolean>(false);
   readonly isMuted = input<boolean>(false);
   readonly isFullscreen = input<boolean>(false);
+  readonly isGeneratingPdf = input<boolean>(false);
 
   readonly formattedElapsed = input<string>('00:00');
   readonly isTimerRunning = input<boolean>(false);
+
+  readonly motionStyle = input<string>('android-open');
+  readonly motionStyleLabel = input<string>('Android 17');
 
   readonly prevClicked = output<void>();
   readonly nextClicked = output<void>();
@@ -338,7 +392,9 @@ export class ControlsBarComponent {
   readonly toggleTheme = output<void>();
   readonly toggleSound = output<void>();
   readonly toggleFullscreen = output<void>();
+  readonly printPdf = output<void>();
   readonly toggleShortcuts = output<void>();
+  readonly cycleMotionStyle = output<void>();
   readonly startTimer = output<void>();
   readonly pauseTimer = output<void>();
   readonly resetTimer = output<void>();

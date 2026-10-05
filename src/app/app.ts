@@ -1,10 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SlideManagerService } from './core/services/slide-manager.service';
 import { PresentationTimerService } from './core/services/presentation-timer.service';
 import { ThemeService } from './core/services/theme.service';
 import { KeyboardNavigationService } from './core/services/keyboard-navigation.service';
 import { AudioFeedbackService } from './core/services/audio-feedback.service';
+import { PdfService } from './core/services/pdf.service';
+import { LoadingService } from './core/services/loading.service';
 
 import { SlideCanvasComponent } from './features/presentation/slide-canvas/slide-canvas.component';
 import { SidebarThumbnailsComponent } from './features/presentation/sidebar-thumbnails/sidebar-thumbnails.component';
@@ -35,6 +37,11 @@ export class App implements OnInit {
   protected readonly themeService = inject(ThemeService);
   protected readonly audioService = inject(AudioFeedbackService);
   private readonly keyboardNav = inject(KeyboardNavigationService);
+  private readonly pdfService = inject(PdfService);
+  private readonly loadingService = inject(LoadingService);
+
+  readonly isGeneratingPdf = this.loadingService.isLoading;
+  readonly pdfContent = viewChild<ElementRef<HTMLElement>>('pdfContent');
 
   ngOnInit(): void {
     // Initialize PowerPoint-style global keyboard navigation listeners
@@ -48,4 +55,16 @@ export class App implements OnInit {
     const nextIdx = this.slideManager.currentIndex() + 1;
     return nextIdx < list.length ? list[nextIdx] : null;
   }
+
+  /**
+   * Generates and downloads the full presentation as a 16:9 PDF.
+   * Leverages PdfService (SRP) from the Kamitech update architecture.
+   */
+  downloadPDF(): void {
+    const element = this.pdfContent();
+    if (element) {
+      this.pdfService.generateAndDownload(element);
+    }
+  }
 }
+
