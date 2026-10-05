@@ -1,0 +1,153 @@
+<div class="presentation-app-container" [class.is-fullscreen]="slideManager.isFullscreen()">
+  <!-- Main Presentation Workspace -->
+  <div class="workspace-area">
+    <!-- Left PowerPoint-style Slide Deck Filmstrip (Hidden in Fullscreen mode) -->
+    @if (!slideManager.isFullscreen()) {
+      <app-sidebar-thumbnails
+        [slides]="slideManager.slides()"
+        [activeIndex]="slideManager.currentIndex()"
+        [isOpen]="slideManager.isSidebarOpen()"
+        (slideSelected)="slideManager.goToSlide($event)"
+        (toggleClicked)="slideManager.toggleSidebar()"
+      ></app-sidebar-thumbnails>
+    }
+
+    <!-- Center Stage: 16:9 Presentation Canvas -->
+    <div class="canvas-stage-wrapper">
+      <app-slide-canvas
+        [slide]="slideManager.currentSlide()"
+        [isPresentationMode]="slideManager.isFullscreen()"
+      ></app-slide-canvas>
+    </div>
+
+    <!-- Presenter Notes & Teleprompter Drawer (Hidden in Fullscreen mode) -->
+    @if (!slideManager.isFullscreen()) {
+      <app-presenter-notes
+        [currentSlide]="slideManager.currentSlide()"
+        [nextSlide]="upcomingSlide"
+        [isOpen]="slideManager.isNotesOpen()"
+        [formattedElapsed]="timerService.formattedElapsed()"
+        (closeClicked)="slideManager.toggleNotes()"
+        (jumpToNext)="slideManager.nextSlide()"
+      ></app-presenter-notes>
+    }
+  </div>
+
+  <!-- Bottom PowerPoint Navigation & Tool Controls Bar (Standard Mode Only) -->
+  @if (!slideManager.isFullscreen()) {
+    <app-controls-bar
+      [currentIndex]="slideManager.currentIndex()"
+      [totalSlides]="slideManager.totalSlides()"
+      [progressPercent]="slideManager.progressPercent()"
+      [canNext]="slideManager.canNext()"
+      [canPrev]="slideManager.canPrev()"
+      [currentSlideTitle]="slideManager.currentSlide().title"
+      [isAutoPlaying]="slideManager.isAutoPlaying()"
+      [isSorterOpen]="slideManager.isSorterOpen()"
+      [isNotesOpen]="slideManager.isNotesOpen()"
+      [isDarkTheme]="themeService.isDark()"
+      [isMuted]="audioService.isMuted()"
+      [isFullscreen]="slideManager.isFullscreen()"
+      [formattedElapsed]="timerService.formattedElapsed()"
+      [isTimerRunning]="timerService.isRunning()"
+      (prevClicked)="slideManager.prevSlide()"
+      (nextClicked)="slideManager.nextSlide()"
+      (slideSelected)="slideManager.goToSlide($event)"
+      (toggleAutoPlay)="slideManager.toggleAutoPlay()"
+      (toggleSorter)="slideManager.toggleSorter()"
+      (toggleNotes)="slideManager.toggleNotes()"
+      (toggleTheme)="themeService.toggleTheme()"
+      (toggleSound)="audioService.toggleSound()"
+      (toggleFullscreen)="slideManager.toggleFullscreen()"
+      (toggleShortcuts)="slideManager.toggleShortcuts()"
+      (startTimer)="timerService.start()"
+      (pauseTimer)="timerService.pause()"
+      (resetTimer)="timerService.reset()"
+    ></app-controls-bar>
+  }
+
+  <!-- Fullscreen Mode Navigation: ONLY Slide and Next & Previous Buttons -->
+  @if (slideManager.isFullscreen()) {
+    <nav class="fullscreen-presentation-nav" aria-label="Fullscreen Navigation">
+      <!-- Left Screen Edge Prev Button -->
+      <button
+        type="button"
+        class="fs-paddle-btn fs-prev-paddle"
+        [disabled]="!slideManager.canPrev()"
+        (click)="slideManager.prevSlide()"
+        title="Slide Sebelumnya (← / PageUp)"
+        aria-label="Slide Sebelumnya"
+      >
+        <span class="paddle-arrow">◀</span>
+      </button>
+
+      <!-- Center Floating Bauhaus Control Capsule: Prev & Next buttons + Slide indicator -->
+      <div class="fs-floating-dock">
+        <button
+          type="button"
+          class="fs-dock-nav-btn"
+          [disabled]="!slideManager.canPrev()"
+          (click)="slideManager.prevSlide()"
+          title="Slide Sebelumnya (←)"
+        >
+          <span class="fs-btn-icon">◀</span>
+          <span class="fs-btn-label">PREV</span>
+        </button>
+
+        <div class="fs-dock-counter" title="Posisi Slide">
+          <span class="fs-counter-curr">{{ slideManager.currentIndex() + 1 }}</span>
+          <span class="fs-counter-sep">/</span>
+          <span class="fs-counter-total">{{ slideManager.totalSlides() }}</span>
+        </div>
+
+        <button
+          type="button"
+          class="fs-dock-nav-btn fs-btn-primary"
+          [disabled]="!slideManager.canNext()"
+          (click)="slideManager.nextSlide()"
+          title="Slide Berikutnya (→ / Space)"
+        >
+          <span class="fs-btn-label">NEXT</span>
+          <span class="fs-btn-icon">▶</span>
+        </button>
+
+        <button
+          type="button"
+          class="fs-dock-exit-btn"
+          (click)="slideManager.toggleFullscreen()"
+          title="Keluar Fullscreen (F5 / Esc)"
+          aria-label="Keluar Fullscreen"
+        >
+          <span>✕</span>
+        </button>
+      </div>
+
+      <!-- Right Screen Edge Next Button -->
+      <button
+        type="button"
+        class="fs-paddle-btn fs-next-paddle"
+        [disabled]="!slideManager.canNext()"
+        (click)="slideManager.nextSlide()"
+        title="Slide Berikutnya (→ / Space / PageDown)"
+        aria-label="Slide Berikutnya"
+      >
+        <span class="paddle-arrow">▶</span>
+      </button>
+    </nav>
+  }
+
+  <!-- PowerPoint-like Slide Sorter Grid Overview Modal (S) -->
+  <app-slide-sorter-modal
+    [slides]="slideManager.slides()"
+    [currentIndex]="slideManager.currentIndex()"
+    [isOpen]="slideManager.isSorterOpen()"
+    (slideSelected)="slideManager.goToSlide($event)"
+    (close)="slideManager.toggleSorter()"
+  ></app-slide-sorter-modal>
+
+  <!-- Keyboard Shortcuts Guide Modal (?) -->
+  <app-shortcuts-modal
+    [isOpen]="slideManager.isShortcutsModalOpen()"
+    (close)="slideManager.toggleShortcuts()"
+  ></app-shortcuts-modal>
+</div>

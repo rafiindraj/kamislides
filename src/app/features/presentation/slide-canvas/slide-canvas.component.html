@@ -1,0 +1,563 @@
+<div class="slide-stage animate-slide-up" [attr.data-slide-id]="slide().id"
+  [class.is-presentation-mode]="isPresentationMode()">
+  <!-- Widescreen 16:9 Presentation Canvas -->
+  <div class="canvas-aspect-wrapper" [class.is-presentation-mode]="isPresentationMode()">
+    <div class="canvas-inner">
+
+      <!-- Slide Meta Top Header -->
+      <header class="slide-header">
+        <div class="header-left">
+          <app-bauhaus-badge variant="primary" [dot]="true">
+            {{ slide().categoryLabel }}
+          </app-bauhaus-badge>
+          <span class="slide-index-tag">
+            BAGIAN {{ slide().slideNumber < 10 ? '0' + slide().slideNumber : slide().slideNumber }} </span>
+        </div>
+
+        <div class="header-right">
+          <div class="bauhaus-brand">
+            <app-bauhaus-geometric variant="trio"></app-bauhaus-geometric>
+            <span class="brand-text">TSI BRINS</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Slide Main Content Body by Layout Type -->
+      <main class="slide-content-area">
+
+        <!-- ========================================== -->
+        <!-- 0. INTRODUCTORY SLIDE (Slide 0)            -->
+        <!-- ========================================== -->
+        @if (slide().layout === 'intro') {
+        <div class="layout-intro-clean">
+          <div class="intro-eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">SHARING SESSION &bull; SOFTWARE ENGINEER</span>
+          </div>
+
+          <h1 class="intro-main-title">
+            {{ slide().title }}
+          </h1>
+
+          <p class="intro-subtitle">
+            {{ slide().subtitle }}
+          </p>
+
+          <!-- Profile Box as requested -->
+          <div class="presenter-card-bauhaus">
+            <div class="presenter-avatar-box">
+              <span class="avatar-initials">RI</span>
+            </div>
+            <div class="presenter-meta">
+              <div class="presenter-name">{{ slide().presenterInfo?.name }}</div>
+              <div class="presenter-role">
+                <span class="role-tag">{{ slide().presenterInfo?.role }}</span>
+                <span class="dept-divider">&bull;</span>
+                <span class="dept-tag">{{ slide().presenterInfo?.department }}</span>
+              </div>
+              <div class="presenter-org">{{ slide().presenterInfo?.organization }}</div>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 1. SPLIT HERO (Slide 1, 4)                 -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'split-hero') {
+        <div class="layout-split-hero">
+          <div class="hero-left-col">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            @if (slide().subtitle) {
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+            }
+
+            @if (slide().keyTakeaway) {
+            <div class="takeaway-banner">
+              <div class="takeaway-stripe"></div>
+              <div class="takeaway-content">
+                <span class="takeaway-tag">POIN PENTING</span>
+                <p class="takeaway-text">{{ slide().keyTakeaway }}</p>
+              </div>
+            </div>
+            }
+
+            @if (slide().interactiveType === 'duck') {
+            <div class="duck-interactive-widget">
+              <div class="duck-widget-header">
+                <span class="duck-tag">INTERAKTIF: KLIK SI BEBEK</span>
+                <app-bauhaus-button variant="tertiary" size="sm" (clicked)="triggerDuckTalk()">
+                  <app-bauhaus-icon name="repeat" [size]="14"></app-bauhaus-icon>
+                  Ajak Curhat Lagi
+                </app-bauhaus-button>
+              </div>
+              <div class="duck-bubble-chat">
+                <div class="duck-mini-avatar" (click)="triggerDuckTalk()" title="Klik si bebek!">
+                  <app-bauhaus-geometric variant="duck"></app-bauhaus-geometric>
+                </div>
+                <div class="bubble-speech">
+                  <div class="speech-speaker">Bebek Meja Kerja:</div>
+                  <div class="speech-text">{{ duckQuackMessage() }}</div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+
+          <div class="hero-right-col">
+            <div class="items-vertical-list">
+              @for (item of slide().items; track item.title; let idx = $index) {
+              <app-bauhaus-card [variant]="idx === 0 ? 'accent-red' : idx === 1 ? 'accent-blue' : 'accent-yellow'">
+                <div class="card-item-header">
+                  @if (item.badge) {
+                  <app-bauhaus-badge variant="outline">{{ item.badge }}</app-bauhaus-badge>
+                  }
+                  <span class="card-item-num">0{{ idx + 1 }}</span>
+                </div>
+                <h3 class="card-item-title">{{ item.title }}</h3>
+                <p class="card-item-desc">{{ item.description }}</p>
+              </app-bauhaus-card>
+              }
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 2. CHECKLIST DIAGNOSTIC (Slide 2)          -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'checklist') {
+        <div class="layout-checklist">
+          <div class="checklist-header-area">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+          </div>
+
+          <div class="checklist-grid">
+            @for (item of slide().items; track item.title; let idx = $index) {
+            <div class="checklist-card" [class.completed]="checklistCompleted()[idx]"
+              (click)="toggleChecklistItem(idx)">
+              <div class="check-box-square">
+                @if (checklistCompleted()[idx]) {
+                <app-bauhaus-icon name="check" [size]="18"></app-bauhaus-icon>
+                }
+              </div>
+              <div class="check-content">
+                <div class="check-meta">
+                  <app-bauhaus-badge [variant]="checklistCompleted()[idx] ? 'primary' : 'outline'">
+                    {{ item.badge }}
+                  </app-bauhaus-badge>
+                  <span class="check-status-label">
+                    {{ checklistCompleted()[idx] ? '✓' : '-' }}
+                  </span>
+                </div>
+                <h3 class="check-title">{{ item.title }}</h3>
+                <p class="check-desc">{{ item.description }}</p>
+              </div>
+            </div>
+            }
+          </div>
+
+          @if (slide().quote) {
+          <div class="bauhaus-quote-banner">
+            <div class="quote-mark">“</div>
+            <div class="quote-body">
+              <p class="quote-text">{{ slide().quote?.text }}</p>
+              <span class="quote-author">— {{ slide().quote?.author }}</span>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 3. COMPARISON TABLE (Slide 3)              -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'comparison-table') {
+        <div class="layout-comparison">
+          <div class="comparison-header">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+
+            <!-- Interactive Mode Switcher -->
+            <div class="mode-switcher-bar">
+              <span class="switcher-label">SIMULASI MODE:</span>
+              <app-bauhaus-button [variant]="selectedFocusMode() === 'focus' ? 'primary' : 'outline'" size="sm"
+                (clicked)="setFocusMode('focus')">
+                <app-bauhaus-icon name="target" [size]="14"></app-bauhaus-icon>
+                MODE FOKUS (Deep Work)
+              </app-bauhaus-button>
+
+              <app-bauhaus-button [variant]="selectedFocusMode() === 'diffuse' ? 'tertiary' : 'outline'" size="sm"
+                (clicked)="setFocusMode('diffuse')">
+                <app-bauhaus-icon name="wind" [size]="14"></app-bauhaus-icon>
+                MODE DIFUS (Santai & Nemu Ide)
+              </app-bauhaus-button>
+            </div>
+          </div>
+
+          <div class="comparison-cards-container">
+            <!-- Mode Fokus Card -->
+            <div class="mode-column col-focus" [class.highlighted-mode]="selectedFocusMode() === 'focus'">
+              <div class="col-header header-red">
+                <div class="col-title-group">
+                  <span class="mode-badge">MODE 01</span>
+                  <h2>{{ slide().comparison?.col1Header }}</h2>
+                </div>
+                <app-bauhaus-icon name="target" [size]="24"></app-bauhaus-icon>
+              </div>
+              <div class="col-rows">
+                @for (row of slide().comparison?.rows; track row.aspect) {
+                <div class="comparison-row-item">
+                  <span class="row-aspect-label">{{ row.aspect }}</span>
+                  <p class="row-value">{{ row.col1 }}</p>
+                </div>
+                }
+              </div>
+            </div>
+
+            <!-- Mode Difus Card -->
+            <div class="mode-column col-diffuse" [class.highlighted-mode]="selectedFocusMode() === 'diffuse'">
+              <div class="col-header header-yellow">
+                <div class="col-title-group">
+                  <span class="mode-badge badge-dark">MODE 02</span>
+                  <h2>{{ slide().comparison?.col2Header }}</h2>
+                </div>
+                <app-bauhaus-icon name="wind" [size]="24"></app-bauhaus-icon>
+              </div>
+              <div class="col-rows">
+                @for (row of slide().comparison?.rows; track row.aspect) {
+                <div class="comparison-row-item">
+                  <span class="row-aspect-label">{{ row.aspect }}</span>
+                  <p class="row-value">{{ row.col2 }}</p>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (slide().comparison?.conclusion) {
+          <div class="comparison-conclusion-footer">
+            <div class="footer-icon">
+              <app-bauhaus-icon name="repeat" [size]="20"></app-bauhaus-icon>
+            </div>
+            <p class="conclusion-text">{{ slide().comparison?.conclusion }}</p>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 5. NUMBERED STEPS (Slide 5)                -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'numbered-steps') {
+        <div class="layout-steps">
+          <div class="steps-header">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+          </div>
+
+          <div class="steps-horizontal-track">
+            @for (item of slide().items; track item.title; let idx = $index) {
+            <div class="step-card-item">
+              <div class="step-number-box" [class.step-final]="idx === 4">
+                <span class="step-prefix">STEP</span>
+                <span class="step-digits">0{{ idx + 1 }}</span>
+              </div>
+              <div class="step-card-content">
+                <app-bauhaus-badge [variant]="idx === 4 ? 'primary' : 'outline'">
+                  {{ item.badge }}
+                </app-bauhaus-badge>
+                <h3 class="step-card-title">{{ item.title }}</h3>
+                <p class="step-card-desc">{{ item.description }}</p>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 6. AI COMPARISON (Slide 6)                 -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'ai-comparison') {
+        <div class="layout-ai-comparison">
+          <div class="ai-header">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+          </div>
+
+          <div class="ai-versus-container">
+            <!-- Left: Rubber Duck -->
+            <div class="versus-card card-duck">
+              <div class="versus-card-top header-yellow">
+                <span class="versus-label">KLASIK</span>
+                <h2>{{ slide().comparison?.col1Header }}</h2>
+                <div class="versus-mini-art">
+                  <app-bauhaus-geometric variant="duck"></app-bauhaus-geometric>
+                </div>
+              </div>
+              <div class="versus-card-body">
+                @for (row of slide().comparison?.rows; track row.aspect) {
+                <div class="versus-row">
+                  <span class="v-aspect">{{ row.aspect }}</span>
+                  <p class="v-val">{{ row.col1 }}</p>
+                </div>
+                }
+              </div>
+            </div>
+
+            <!-- VS Badge -->
+            <div class="versus-divider">
+              <div class="vs-circle">VS</div>
+              <div class="vs-line"></div>
+            </div>
+
+            <!-- Right: AI Agent -->
+            <div class="versus-card card-ai">
+              <div class="versus-card-top header-blue">
+                <span class="versus-label">MODERN</span>
+                <h2>{{ slide().comparison?.col2Header }}</h2>
+                <div class="versus-mini-art">
+                  <app-bauhaus-icon name="cpu" [size]="40"></app-bauhaus-icon>
+                </div>
+              </div>
+              <div class="versus-card-body">
+                @for (row of slide().comparison?.rows; track row.aspect) {
+                <div class="versus-row">
+                  <span class="v-aspect">{{ row.aspect }}</span>
+                  <p class="v-val">{{ row.col2 }}</p>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (slide().comparison?.conclusion) {
+          <div class="ai-conclusion-banner">
+            <app-bauhaus-icon name="sparkles" [size]="20"></app-bauhaus-icon>
+            <span>{{ slide().comparison?.conclusion }}</span>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 7, 8, 9, 12. GRID CARDS                    -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'grid-cards') {
+        <div class="layout-grid-cards">
+          <div class="grid-header-area">
+            <div class="header-titles">
+              <h1 class="slide-heading">{{ slide().title }}</h1>
+              <p class="slide-subheading">{{ slide().subtitle }}</p>
+            </div>
+
+            <!-- Interactive Exercise for Slide 8 (Teknik Menurunkan Stress) -->
+            @if (slide().interactiveType === 'timer') {
+            <div class="exercise-widget">
+              @if (!eyeTimerRunning()) {
+              <app-bauhaus-button variant="tertiary" size="sm" (clicked)="startEyeExercise()">
+                <app-bauhaus-icon name="eye" [size]="16"></app-bauhaus-icon>
+                COBA LATIHAN 20-20-20 SEKARANG!
+              </app-bauhaus-button>
+              } @else {
+              <div class="eye-timer-active">
+                <span class="timer-countdown">{{ eyeTimerSeconds() }} DETIK</span>
+                <span class="timer-guide">Tatap objek sejauh 6 meter ke luar jendela...</span>
+                <app-bauhaus-button variant="outline" size="sm" (clicked)="stopEyeExercise()">
+                  BATAL
+                </app-bauhaus-button>
+              </div>
+              }
+            </div>
+            }
+          </div>
+
+          @if (slide().quote) {
+          <div class="grid-quote-strip">
+            <span class="strip-quote">“{{ slide().quote?.text }}”</span>
+            <span class="strip-author">— {{ slide().quote?.author }}</span>
+          </div>
+          }
+
+          <div class="cards-matrix" [class.matrix-3]="slide().items?.length === 3"
+            [class.matrix-4]="slide().items?.length === 4" [class.matrix-5]="slide().items?.length === 5"
+            [class.matrix-6]="slide().items?.length === 6">
+            @for (item of slide().items; track item.title; let idx = $index) {
+            <app-bauhaus-card
+              [variant]="idx % 3 === 0 ? 'accent-red' : idx % 3 === 1 ? 'accent-blue' : 'accent-yellow'">
+              <div class="matrix-card-header">
+                @if (item.badge) {
+                <app-bauhaus-badge variant="outline">{{ item.badge }}</app-bauhaus-badge>
+                }
+                @if (item.icon) {
+                <div class="matrix-card-icon">
+                  <app-bauhaus-icon [name]="item.icon" [size]="20"></app-bauhaus-icon>
+                </div>
+                }
+              </div>
+              <h3 class="matrix-card-title">{{ item.title }}</h3>
+              <p class="matrix-card-desc">{{ item.description }}</p>
+            </app-bauhaus-card>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- ========================================== -->
+        <!-- 10. TIMELINE SCHEDULE (Slide 10)           -->
+        <!-- ========================================== -->
+        @else if (slide().layout === 'timeline') {
+        <div class="layout-timeline">
+          <div class="timeline-header">
+            <h1 class="slide-heading">{{ slide().title }}</h1>
+            <p class="slide-subheading">{{ slide().subtitle }}</p>
+          </div>
+
+          <div class="timeline-flow-container">
+            @for (item of slide().items; track item.title; let idx = $index) {
+            <div class="timeline-station">
+              <div class="station-marker">
+                <div class="marker-box" [class.marker-active]="idx === 2">
+                  @if (item.icon) {
+                  <app-bauhaus-icon [name]="item.icon" [size]="20"></app-bauhaus-icon>
+                  } @else {
+                  <span>0{{ idx + 1 }}</span>
+                  }
+                </div>
+                @if (idx < (slide().items?.length || 0) - 1) { <div class="station-connector">
+              </div>
+              }
+            </div>
+
+            <div class="station-card">
+              <app-bauhaus-badge [variant]="idx === 2 ? 'primary' : 'outline'">
+                {{ item.badge }}
+              </app-bauhaus-badge>
+              <h3 class="station-title">{{ item.title }}</h3>
+              <p class="station-desc">{{ item.description }}</p>
+            </div>
+          </div>
+          }
+        </div>
+    </div>
+    }
+
+    <!-- ========================================== -->
+    <!-- 11. CRITICAL ALERT (Slide 11)              -->
+    <!-- ========================================== -->
+    @else if (slide().layout === 'critical-alert') {
+    <div class="layout-critical-alert">
+      <div class="alert-top-hero">
+        <div class="alert-hero-badge">
+          <app-bauhaus-icon name="shield-alert" [size]="22"></app-bauhaus-icon>
+          <span>KESEHATAN MENTAL & KESELAMATAN DIRI</span>
+        </div>
+        <h1 class="alert-hero-title">{{ slide().title }}</h1>
+        <p class="alert-hero-sub">{{ slide().subtitle }}</p>
+      </div>
+
+      <div class="alert-signs-grid">
+        @for (item of slide().items; track item.title; let idx = $index) {
+        <div class="sign-card">
+          <div class="sign-indicator"></div>
+          <div class="sign-content">
+            <span class="sign-tag">{{ item.badge }} 0{{ idx + 1 }}</span>
+            <h3 class="sign-title">{{ item.title }}</h3>
+            <p class="sign-desc">{{ item.description }}</p>
+          </div>
+        </div>
+        }
+      </div>
+
+      @if (slide().keyTakeaway) {
+      <div class="alert-action-banner">
+        <div class="banner-accent-square"></div>
+        <div class="banner-body">
+          <span class="banner-title">LANGKAH KONKRET:</span>
+          <p class="banner-text">{{ slide().keyTakeaway }}</p>
+        </div>
+      </div>
+      }
+
+      @if (slide().quote) {
+      <div class="alert-quote-footer">
+        <p>“{{ slide().quote?.text }}”</p>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- ========================================== -->
+    <!-- 13. SUMMARY & CONCLUSION (Slide 13)        -->
+    <!-- ========================================== -->
+    @else if (slide().layout === 'summary') {
+    <div class="layout-summary">
+      <div class="summary-left-col">
+        <span class="summary-overline">BUNGKUS!</span>
+        <h1 class="slide-heading">{{ slide().title }}</h1>
+        <p class="slide-subheading">{{ slide().subtitle }}</p>
+
+        <div class="summary-action-card">
+          <div class="action-card-accent"></div>
+          <div class="action-card-body">
+            <span class="action-card-tag">TANTANGAN 7 HARI</span>
+            <h3>Mulai dari Hal Kecil Hari Ini!</h3>
+            <p>{{ slide().keyTakeaway }}</p>
+          </div>
+        </div>
+
+        <!-- Speaker Sign-off -->
+        <div class="speaker-signoff">
+          <div class="signoff-avatar">RI</div>
+          <div class="signoff-meta">
+            <div class="signoff-name">{{ slide().presenterInfo?.name }}</div>
+            <div class="signoff-role">{{ slide().presenterInfo?.role }} &bull; {{ slide().presenterInfo?.department }}
+            </div>
+            <div class="signoff-org">{{ slide().presenterInfo?.organization }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-right-col">
+        <div class="summary-points-stack">
+          @for (item of slide().items; track item.title; let idx = $index) {
+          <div class="summary-item-card">
+            <div class="summary-num-box">{{ idx + 1 }}</div>
+            <div class="summary-item-text">
+              <div class="summary-item-badge">{{ item.badge }}</div>
+              <h3 class="summary-item-title">{{ item.title }}</h3>
+              <p class="summary-item-desc">{{ item.description }}</p>
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="qna-closing-banner">
+          <div class="qna-title">TERIMA KASIH REKAN-REKAN!</div>
+          <div class="qna-sub">Semangat Pagi!</div>
+        </div>
+      </div>
+    </div>
+    }
+
+    </main>
+
+    <!-- Slide Footer Bar -->
+    <footer class="slide-footer">
+      <div class="footer-left">
+        <span class="footer-topic">Kerja Tenang, Pikiran Senang &bull; </span>
+      </div>
+      <div class="footer-center">
+        <span class="footer-speaker">Rafi Indrajati &mdash; TSI BRINS</span>
+      </div>
+      <div class="footer-right">
+        <span class="footer-number">
+          SLIDE {{ slide().slideNumber < 10 ? '0' + slide().slideNumber : slide().slideNumber }} </span>
+      </div>
+    </footer>
+
+  </div>
+</div>
+</div>

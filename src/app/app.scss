@@ -1,0 +1,241 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.presentation-app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.workspace-area {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas-stage-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface-subtle);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Fullscreen presentation optimization */
+.presentation-app-container.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: var(--color-surface-subtle);
+
+  .workspace-area {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+  }
+
+  .canvas-stage-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+}
+
+/* ==========================================================
+   FULLSCREEN NAVIGATION CONTROLS (ONLY SLIDE + NEXT/PREV)
+   ========================================================== */
+.fullscreen-presentation-nav {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Side Paddle Buttons (Edge Next & Prev) */
+.fs-paddle-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 84px;
+  pointer-events: auto;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 3px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--color-border);
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  opacity: 0.65;
+
+  &:hover:not(:disabled) {
+    opacity: 1;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    transform: translateY(-50%) translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--color-border);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(-50%) translate(0, 0);
+    box-shadow: 2px 2px 0px var(--color-border);
+  }
+
+  &:disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    background-color: var(--color-surface-subtle);
+    box-shadow: none;
+  }
+}
+
+.fs-prev-paddle {
+  left: 20px;
+}
+
+.fs-next-paddle {
+  right: 20px;
+}
+
+/* Floating Bauhaus Bottom Control Bar */
+.fs-floating-dock {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--color-surface);
+  border: 3px solid var(--color-border);
+  padding: 8px 14px;
+  box-shadow: 5px 5px 0px var(--color-border);
+  transition: opacity 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+    box-shadow: 7px 7px 0px var(--color-border);
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
+
+.fs-dock-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--color-border);
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    color: #FFFFFF;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px var(--color-border);
+  }
+
+  &:active:not(:disabled) {
+    transform: translate(0, 0);
+    box-shadow: 1px 1px 0px var(--color-border);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .fs-btn-icon {
+    font-size: 0.78rem;
+  }
+}
+
+.fs-dock-nav-btn.fs-btn-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+
+  &:hover:not(:disabled) {
+    background-color: #D62839;
+    color: #FFFFFF;
+  }
+}
+
+.fs-dock-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.fs-counter-curr {
+  color: var(--color-primary);
+  font-size: 1.05rem;
+}
+
+.fs-counter-sep {
+  color: var(--color-neutral-muted);
+}
+
+.fs-counter-total {
+  color: var(--color-text-secondary);
+}
+
+.fs-dock-exit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--color-border);
+  transition: all 150ms ease;
+
+  &:hover {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--color-border);
+  }
+}
